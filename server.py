@@ -30,7 +30,7 @@ def get_eval_fn(model, args=None):
     
     mnist_transform = transforms.Compose(
         [transforms.ToTensor(),
-         transforms.transforms.Normalize((0.5, ), (0.5, ))]
+         transforms.transforms.Normalize((0.1307,), (0.3081,))]
     )
     
     cifar_transform = transforms.Compose(
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     parser.add_argument("--datasets", type=str, default='cifar100')
     parser.add_argument("--fr_rate", type=float, default=0.0)
     parser.add_argument("--fr_val_rate", type=float, default=0.0)
-    parser.add_argument("--round", type=int, default=10)
+    parser.add_argument("--round", type=int, default=5)
     parser.add_argument("--min_client", type=int, default=2)
     parser.add_argument("--min_ac", type=int, default=2)
     parser.add_argument("--strategy", type=str, default= 'fedavg')
@@ -123,7 +123,7 @@ if __name__ == "__main__":
 #        model = resnet18(norm_layer=lambda x: GroupNorm(2, x), num_classes=100).cuda()
     
     model.eval()
-
+    
     # Define strategy
     if args.strategy == 'fedavg' : 
         strategy = fl.server.strategy.FedAvg(
@@ -182,7 +182,8 @@ if __name__ == "__main__":
     
     # Start server
     fl.server.start_server(
-        server_address="[::]:8080",
+        server_address="0.0.0.0:8080",
+        #server_address="[::]:8080",
         config={"num_rounds": args.round,
                 "fraction_rate" : args.fr_rate,
                 "gpu number" : 0},

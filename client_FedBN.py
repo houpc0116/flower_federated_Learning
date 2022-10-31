@@ -159,6 +159,7 @@ def main():
     parser.add_argument("--gpu", type=str, default='0')
     parser.add_argument("--num_client_cpus", type=int, default=2)  ##CPU核心
     parser.add_argument("--num_rounds", type=int, default=5)
+    parser.add_argument("--mode", type=str, default='fedbn')
     args = parser.parse_args()
 
     # GPU/CPU
@@ -172,6 +173,8 @@ def main():
 
     elif args.model == 'resnet' : 
         net = resnet18(norm_layer=lambda x: GroupNorm(2, x), num_classes=100)
+
+    USE_FEDBN = True
 
     wandb.config.update(args)
     wandb.watch(net)
@@ -194,12 +197,21 @@ def main():
                  #self.net = resnet18(norm_layer=lambda x: GroupNorm(2, x), num_classes=100).cuda()
 
         def get_parameters(self):
-            return [val.cpu().numpy() for _, val in net.state_dict().items()]
+            if args.mode == 'fedbn' :
+                return [val.cpu().numpy() for name, val in net.state_dict().items() if "bn" not in name]
+            else :
+                return [val.cpu().numpy() for _, val in net.state_dict().items()]
 
         def set_parameters(self, parameters):
-            params_dict = zip(net.state_dict().keys(), parameters)
-            state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
-            net.load_state_dict(state_dict, strict=True)
+            if args.mode == 'fedbn' :
+                keys = [k for k in net.state_dict().keys() if "bn" not in k]
+                params_dict = zip(keys, parameters)
+                state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
+                net.load_state_dict(state_dict, strict=False)
+            else:
+                params_dict = zip(net.state_dict().keys(), parameters)
+                state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
+                net.load_state_dict(state_dict, strict=True)
 
         def fit(self, parameters, config):
             self.set_parameters(parameters)

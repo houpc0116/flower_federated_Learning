@@ -3,6 +3,10 @@
 修改成CPU執行
 
 
+### 版本 ver 1.0.1  日期:2022.10.31
+
+新增FedBN
+
 # Federated_Learning
 Implementation of federated learning using flower framework
 
