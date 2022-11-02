@@ -30,7 +30,7 @@ def get_eval_fn(model, args=None):
     
     mnist_transform = transforms.Compose(
         [transforms.ToTensor(),
-         transforms.transforms.Normalize((0.1307,), (0.3081,))]
+         transforms.transforms.Normalize((0.5, ), (0.5, ))]
     )
     
     cifar_transform = transforms.Compose(
@@ -43,7 +43,7 @@ def get_eval_fn(model, args=None):
     if args.datasets == 'mnist' : 
         testset = MNIST("./dataset", train=False, download=True, transform=mnist_transform)
     
-    if args.datasets == 'cifar' : 
+    if args.datasets == 'cifar10' : 
         testset = CIFAR10("./dataset", train=False, download=True, transform=cifar_transform)
 
     elif args.datasets == 'cifar100' : 
@@ -123,7 +123,7 @@ if __name__ == "__main__":
 #        model = resnet18(norm_layer=lambda x: GroupNorm(2, x), num_classes=100).cuda()
     
     model.eval()
-    
+
     # Define strategy
     if args.strategy == 'fedavg' : 
         strategy = fl.server.strategy.FedAvg(
@@ -177,7 +177,7 @@ if __name__ == "__main__":
             tau  = 1e-9,
         )
 
-    wandb.init(project="nilm", entity="josie_hou", group='mnist_fedavg', job_type='eval2')
+    wandb.init(project="NILM", entity="josie_hou", group='mnist_fedavg', job_type='eval2')
     wandb.config.update(args)  
     
     # Start server

@@ -7,6 +7,14 @@
 
 新增FedBN
 
+
+### 版本 ver 1.0.2  日期:2022.11.01
+
+分散式訓誡
+
+------------------------------------------------------------------
+
+
 # Federated_Learning
 Implementation of federated learning using flower framework
 

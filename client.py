@@ -144,7 +144,7 @@ def load_datasets(num_clients, args=None):
 
 def main():
     """Create model, load data, define Flower client, start Flower client."""
-    wandb.init(project="nilm", entity="josie_hou", group='mnist_fedavg', job_type='eval2')
+    wandb.init(project="NILM", entity="josie_hou", group='mnist_fedavg', job_type='eval2')
 
     parser = argparse.ArgumentParser(description="Flower-Client")
     #parser.add_argument("--partition", type=int, choices=range(0, 100), required=True)
@@ -207,7 +207,8 @@ def main():
             return self.get_parameters(), len(trainloader), {}
 
     # Start client
-    fl.client.start_numpy_client("0.0.0.0:8080", client=FlowerClient(args=args))
+    fl.client.start_numpy_client("34.81.158.140:8080", client=FlowerClient(args=args))
+    #fl.client.start_numpy_client("[::]:8080", client=FlowerClient(args=args))
 
 
 if __name__ == "__main__":
